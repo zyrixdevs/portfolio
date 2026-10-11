@@ -7,6 +7,8 @@ type Side = 'left' | 'right';
 export interface OptionWheelProps {
   items?: string[];
   defaultSelected?: number;
+  scrollPosition?: number;
+  captureWheel?: boolean;
   onChange?: (index: number, item: string) => void;
   textColor?: string;
   activeColor?: string;
@@ -62,6 +64,8 @@ const DEFAULT_ITEMS = [
 const OptionWheel = ({
   items = DEFAULT_ITEMS,
   defaultSelected = 3,
+  scrollPosition,
+  captureWheel = true,
   onChange,
   textColor = '#a6a6a6',
   activeColor = '#ffffff',
@@ -216,14 +220,19 @@ const OptionWheel = ({
     [startLoop, playTick]
   );
 
+  useEffect(() => {
+    if (scrollPosition !== undefined && !dragRef.current) applyTarget(scrollPosition, false);
+  }, [scrollPosition, applyTarget]);
+
   // Wheel / touchpad scrolling, registered manually so it can be non-passive.
   useEffect(() => {
     const el = rootRef.current;
     if (!el) return;
     const onWheel = (e: WheelEvent) => {
+      if (!captureWheel && Math.abs(e.deltaY) >= Math.abs(e.deltaX)) return;
       e.preventDefault();
       const cfg = cfgRef.current;
-      const delta = e.deltaMode === 1 ? e.deltaY * 24 : e.deltaY;
+      const delta = e.deltaMode === 1 ? e.deltaY * 24 : (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY);
       // Cap each event at one step so notchy mouse wheels move exactly one
       // option per click, while touchpads still scroll continuously.
       const step = Math.max(-1, Math.min(1, delta / cfg.rowH));
@@ -236,7 +245,7 @@ const OptionWheel = ({
       el.removeEventListener('wheel', onWheel);
       if (wheelTimerRef.current) clearTimeout(wheelTimerRef.current);
     };
-  }, [applyTarget]);
+  }, [applyTarget, captureWheel]);
 
   const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (!cfgRef.current.draggable) return;
@@ -317,6 +326,7 @@ const OptionWheel = ({
       className={`relative h-full w-full select-none overflow-hidden outline-none [touch-action:none] ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}${className ? ` ${className}` : ''}`}
       style={
         {
+          touchAction: captureWheel ? 'none' : 'pan-y',
           '--ow-text-color': textColor,
           '--ow-active-color': activeColor,
           '--ow-font-size': `${fontSize}rem`,

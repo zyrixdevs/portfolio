@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import { Icon } from "@iconify/react";
-import arrow from "@iconify-icons/solar/arrow-right-up-linear";
+import FlowingMenu from "./react-bits/FlowingMenu";
 
 /** Original GSAP overlay, replacing the Framer module at the user's request. */
 export default function MotionOverlayMenu({
@@ -68,14 +67,11 @@ export default function MotionOverlayMenu({
   const navigate = (id: string) =>
     dismiss(() => {
       history.replaceState(null, "", `#${id}`);
-      document
-        .getElementById(id)
-        ?.scrollIntoView({
-          behavior: window.matchMedia("(prefers-reduced-motion: reduce)")
-            .matches
-            ? "instant"
-            : "smooth",
-        });
+      document.getElementById(id)?.scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "instant"
+          : "smooth",
+      });
       document.getElementById(id)?.focus({ preventScroll: true });
     });
   return (
@@ -83,7 +79,7 @@ export default function MotionOverlayMenu({
       ref={ref}
       id="site-menu"
       className="motion-overlay"
-      aria-label="Explore Zyrix"
+      aria-label="Explore zyrixdev"
       onCancel={(e) => {
         e.preventDefault();
         dismiss();
@@ -91,9 +87,7 @@ export default function MotionOverlayMenu({
       data-lenis-prevent
     >
       <div className="overlay-top">
-        <span className="overlay-brand">
-          zyrix<span>.dev</span>
-        </span>
+        <span className="overlay-brand">zyrixdev</span>
         <button onClick={() => dismiss()} aria-label="Close menu">
           CLOSE <span>×</span>
         </button>
@@ -114,40 +108,53 @@ export default function MotionOverlayMenu({
           </p>
           <a href="mailto:imzyrixx@gmail.com">imzyrixx@gmail.com</a>
         </div>
-        <nav aria-label="Overlay navigation">
-          {[
-            ["work", "Selected work"],
-            ["services", "Our capabilities"],
-            ["studio", "The studio"],
-            ["playground", "The playground"],
-          ].map(([id, text], i) => (
-            <div className="overlay-row-wrap" key={id}>
-              <a
-                className="overlay-row"
-                href={`#${id}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigate(id);
-                }}
-              >
-                <small>0{i + 1}</small>
-                <span>{text}</span>
-                <Icon
-                  className="overlay-arrow"
-                  icon={arrow}
-                  aria-hidden="true"
-                />
-              </a>
-            </div>
-          ))}
-          <div className="overlay-row-wrap">
-            <button className="overlay-row" onClick={() => dismiss(onContact)}>
-              <small>05</small>
-              <span>Start something</span>
-              <Icon className="overlay-arrow" icon={arrow} aria-hidden="true" />
-            </button>
-          </div>
-        </nav>
+        <div
+          className="overlay-flow"
+          onClick={(e) => {
+            const link = (e.target as HTMLElement).closest("a");
+            if (!link) return;
+            e.preventDefault();
+            const id = link.getAttribute("href")?.slice(1);
+            if (id === "contact") dismiss(onContact);
+            else if (id) navigate(id);
+          }}
+        >
+          <FlowingMenu
+            items={[
+              {
+                link: "#work",
+                text: "Selected work",
+                image: "/images/city.jpg",
+              },
+              {
+                link: "#services",
+                text: "Our capabilities",
+                image: "/images/bridge.jpg",
+              },
+              {
+                link: "#studio",
+                text: "The studio",
+                image: "/images/garden.jpg",
+              },
+              {
+                link: "#playground",
+                text: "New perspectives",
+                image: "/images/coast.jpg",
+              },
+              {
+                link: "#contact",
+                text: "Start something",
+                image: "/images/venice.jpg",
+              },
+            ]}
+            bgColor="#eeece4"
+            textColor="#24261f"
+            marqueeBgColor="#ff653b"
+            marqueeTextColor="#24261f"
+            borderColor="#24261f30"
+            speed={18}
+          />
+        </div>
       </div>
       <div className="overlay-bottom">
         <span>WEBSITES / BOTS / AUTOMATIONS / SOFTWARE</span>

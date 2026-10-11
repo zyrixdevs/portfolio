@@ -14,6 +14,7 @@ export interface InfiniteSpiralItem {
 export interface InfiniteSpiralProps {
   items?: Array<string | InfiniteSpiralItem>;
   speed?: number;
+  scrollPosition?: number;
   direction?: 'up' | 'down';
   animationMode?: 'auto' | 'drag' | 'scroll' | 'all';
   radius?: number;
@@ -46,6 +47,7 @@ const smoothstep = (min: number, max: number, value: number) => {
 const InfiniteSpiral = ({
   items = [],
   speed = 0.55,
+  scrollPosition,
   direction = 'up',
   animationMode = 'auto',
   radius = 170,
@@ -74,6 +76,12 @@ const InfiniteSpiral = ({
   const visibleRef = useRef(true);
   const draggingRef = useRef(false);
   const lastPointerYRef = useRef(0);
+  const lastPointerXRef = useRef(0);
+  const externallyDriven = useRef(scrollPosition !== undefined);
+  externallyDriven.current = scrollPosition !== undefined;
+  useEffect(() => {
+    if (scrollPosition !== undefined && !draggingRef.current) targetProgressRef.current = scrollPosition;
+  }, [scrollPosition]);
   const dragMovedRef = useRef(false);
 
   const normalizedItems = useMemo<NormalizedItem[]>(
@@ -110,7 +118,7 @@ const InfiniteSpiral = ({
       const nextScrollY = window.scrollY;
       const scrollDelta = nextScrollY - lastScrollY;
       lastScrollY = nextScrollY;
-      if (!scrollEnabled || !visibleRef.current || scrollDelta === 0) return;
+      if (externallyDriven.current || !scrollEnabled || !visibleRef.current || scrollDelta === 0) return;
       targetProgressRef.current += clamp(
         (scrollDelta * scrollSpeedMultiplier) / Math.max(verticalSpacing * 2, 1),
         -1.5,
@@ -200,12 +208,12 @@ const InfiniteSpiral = ({
     '--spiral-width': `${cardWidth}px`,
     '--spiral-height': `${cardHeight}px`,
     '--spiral-radius': `${cardRadius}px`,
-    cursor: animationMode === 'drag' || animationMode === 'all' ? 'grab' : 'default',
-    touchAction: animationMode === 'drag' || animationMode === 'all' ? 'pan-x' : 'auto',
-    userSelect: animationMode === 'drag' || animationMode === 'all' ? 'none' : 'auto'
+    cursor: animationMode === 'drag' || animationMode === 'all' || animationMode === 'scroll' ? 'grab' : 'default',
+    touchAction: animationMode === 'drag' || animationMode === 'all' || animationMode === 'scroll' ? 'pan-y' : 'auto',
+    userSelect: animationMode === 'drag' || animationMode === 'all' || animationMode === 'scroll' ? 'none' : 'auto'
   } as CSSProperties;
 
-  const dragEnabled = animationMode === 'drag' || animationMode === 'all';
+  const dragEnabled = animationMode === 'drag' || animationMode === 'all' || animationMode === 'scroll';
 
   const stopDragging = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (!draggingRef.current) return;
@@ -249,13 +257,17 @@ const InfiniteSpiral = ({
         draggingRef.current = true;
         dragMovedRef.current = false;
         lastPointerYRef.current = event.clientY;
+        lastPointerXRef.current = event.clientX;
         targetProgressRef.current = progressRef.current;
         event.currentTarget.setPointerCapture(event.pointerId);
         event.currentTarget.style.cursor = 'grabbing';
       }}
       onPointerMove={event => {
         if (!draggingRef.current) return;
-        const pointerDelta = event.clientY - lastPointerYRef.current;
+        const dx = event.clientX - lastPointerXRef.current;
+        const dy = event.clientY - lastPointerYRef.current;
+        const pointerDelta = event.pointerType === "touch" || Math.abs(dx) > Math.abs(dy) ? dx : dy;
+        lastPointerXRef.current = event.clientX;
         lastPointerYRef.current = event.clientY;
         if (Math.abs(pointerDelta) > 0.5) dragMovedRef.current = true;
         targetProgressRef.current -= pointerDelta / Math.max(verticalSpacing, 1);

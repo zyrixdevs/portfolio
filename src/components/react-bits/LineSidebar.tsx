@@ -22,6 +22,7 @@ export interface LineSidebarProps {
   fontSize?: number;
   smoothing?: number;
   defaultActive?: number | null;
+  active?: number;
   onItemClick?: (index: number, label: string) => void;
   className?: string;
 }
@@ -65,6 +66,7 @@ const LineSidebar = ({
   fontSize = 1.1,
   smoothing = 100,
   defaultActive = null,
+  active,
   onItemClick,
   className = ''
 }: LineSidebarProps) => {
@@ -115,6 +117,10 @@ const LineSidebar = ({
     lastRef.current = performance.now();
     rafRef.current = requestAnimationFrame(runFrame);
   }, [runFrame]);
+
+  useEffect(() => {
+    if (active !== undefined) { setActiveIndex(active); activeRef.current = active; startLoop(); }
+  }, [active, startLoop]);
 
   const handlePointerMove = useCallback(
     (e: React.PointerEvent<HTMLUListElement>) => {

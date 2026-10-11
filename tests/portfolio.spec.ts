@@ -1,6 +1,10 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem("zyrixdev-intro", "1"));
+});
+
 test("page renders without runtime errors or horizontal overflow", async ({
   page,
 }) => {
@@ -44,7 +48,7 @@ test("all concept studies open and close accessibly", async ({ page }) => {
   }
 });
 
-test("contact validates input and creates an addressed email without sending", async ({
+test("contact submits to the backend and preserves input after a failed send", async ({
   page,
 }) => {
   await page.goto("/");
@@ -52,26 +56,41 @@ test("contact validates input and creates an addressed email without sending", a
     .getByRole("button", { name: "Start a project", exact: true })
     .click();
   const dialog = page.getByRole("dialog");
-  await dialog.getByRole("button", { name: "Prepare project email" }).click();
+  const send = dialog.getByRole("button", { name: "Send project message" });
+  await send.click();
   await expect(
-    dialog.getByText("Your introduction is ready."),
+    dialog.getByText("Your next chapter starts here."),
   ).not.toBeVisible();
   await dialog.getByLabel("Your name").fill("Jamie Example");
   await dialog.getByLabel("Email address").fill("jamie@example.com");
   await dialog
     .getByLabel("A little about your idea")
     .fill("A creative website with accessible 3D interactions.");
-  await dialog.getByRole("button", { name: "Prepare project email" }).click();
-  await expect(dialog.getByText("Your introduction is ready.")).toBeVisible();
-  const href = await dialog
-    .getByRole("link", { name: "Open email app" })
-    .getAttribute("href");
-  expect(href).toContain("mailto:imzyrixx@gmail.com?");
-  expect(decodeURIComponent(href!)).toContain("Jamie Example");
-  expect(decodeURIComponent(href!)).toContain("accessible 3D interactions");
-  await dialog.getByRole("button", { name: "Edit your introduction" }).click();
+  await page.route("**/api/contact", (route) =>
+    route.fulfill({
+      status: 503,
+      json: { error: "Online sending is being connected." },
+    }),
+  );
+  await send.click();
+  await expect(dialog.getByRole("alert")).toContainText(
+    "Online sending is being connected.",
+  );
   await expect(dialog.getByLabel("Your name")).toHaveValue("Jamie Example");
-  await page.keyboard.press("Escape");
+  await page.unroute("**/api/contact");
+  await page.route("**/api/contact", async (route) => {
+    expect(route.request().postDataJSON()).toMatchObject({
+      name: "Jamie Example",
+      email: "jamie@example.com",
+      service: "Websites",
+    });
+    await route.fulfill({ json: { ok: true } });
+  });
+  await send.click();
+  await expect(
+    dialog.getByText("Your next chapter starts here."),
+  ).toBeVisible();
+  await expect(dialog.getByRole("alert")).toHaveCount(0);
 });
 
 test("GSAP overlay navigation works with focus return and section links", async ({
@@ -133,10 +152,10 @@ test("without JavaScript the organization and contact route remain available", a
   const page = await context.newPage();
   await page.goto("http://127.0.0.1:4173");
   await expect(
-    page.getByRole("heading", { name: "Zyrix — Code meets possibility." }),
+    page.getByRole("heading", { name: "zyrixdev — Code meets possibility." }),
   ).toBeVisible();
   await expect(
-    page.getByRole("link", { name: "connect with Zyrix on GitHub" }),
+    page.getByRole("link", { name: "connect with zyrixdev on GitHub" }),
   ).toHaveAttribute("href", "https://github.com/zyrixdevs");
   await context.close();
 });
@@ -148,6 +167,8 @@ test("capability wheel changes details and preselects the project inquiry", asyn
   const wheel = page.getByRole("listbox", { name: "Option wheel" });
   await wheel.scrollIntoViewIfNeeded();
   await wheel.focus();
+  await page.waitForTimeout(400);
+  await wheel.getByRole("option", { name: "Websites", exact: true }).click();
   await page.keyboard.press("ArrowDown");
   await expect(
     page.getByRole("heading", { name: "Put a new teammate to work." }),
@@ -171,14 +192,14 @@ test("process sidebar and two-sided philosophy card support keyboard input", asy
     page.getByRole("heading", { name: "Give the idea a shape." }),
   ).toBeVisible();
   const card = page.getByRole("button", {
-    name: "Flip the studio philosophy card",
+    name: "Flip the clarity card",
   });
   await card.scrollIntoViewIfNeeded();
   await card.focus();
   await page.keyboard.press("Enter");
   await expect(card).toHaveAttribute("aria-pressed", "true");
   await expect(
-    card.getByRole("heading", { name: "Made for people. Built with purpose." }),
+    card.getByRole("heading", { name: "Good software feels obvious." }),
   ).toBeVisible();
   await page.keyboard.press("Enter");
   await expect(card).toHaveAttribute("aria-pressed", "false");
@@ -203,18 +224,16 @@ test("tear-off invitation opens the project composer and can be restored", async
   await expect(ticket).toBeVisible();
 });
 
-test("flowing service menu selects the correct inquiry type", async ({
-  page,
-}) => {
+test("flowing overlay opens the contact form", async ({ page }) => {
   await page.goto("/");
-  await page.locator(".service-flow").scrollIntoViewIfNeeded();
+  await page.getByRole("button", { name: "Open menu" }).click();
   await page
-    .locator(".flow-live")
-    .getByRole("link", { name: "Automations", exact: true })
+    .locator(".overlay-flow")
+    .getByRole("link", { name: "Start something" })
     .click();
   await expect(
-    page.getByRole("dialog").getByLabel("What are you thinking?"),
-  ).toHaveValue("Automations");
+    page.getByRole("dialog", { name: "A good place to start." }),
+  ).toBeVisible();
 });
 
 test("FlexCarousel responds to keyboard navigation", async ({ page }) => {
@@ -223,6 +242,7 @@ test("FlexCarousel responds to keyboard navigation", async ({ page }) => {
   const carousel = page.getByRole("region", { name: "Image carousel" });
   await expect(carousel.locator("canvas")).toBeVisible();
   await carousel.focus();
+  await page.keyboard.press("Home");
   await page.keyboard.press("ArrowRight");
   await expect(carousel.locator("[aria-live]")).toContainText("2 of 5");
 });
@@ -284,7 +304,7 @@ test("new visual sections and overlay retain accessible controls", async ({
   }
   await page.getByRole("button", { name: "Open menu", exact: true }).click();
   await expect(
-    page.getByRole("dialog", { name: "Explore Zyrix" }),
+    page.getByRole("dialog", { name: "Explore zyrixdev" }),
   ).toBeVisible();
   const results = await new AxeBuilder({ page }).analyze();
   expect(

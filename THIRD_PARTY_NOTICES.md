@@ -33,3 +33,23 @@ Vendored `CircleButtons` and its stylesheet under `src/components/threeui/`, use
 `public/sculpture.png` is a static capture of this site's original Three.js scene. `public/social.jpg` captures the current hero. `public/work/*.png` are original HTML/interface compositions authored in `scripts/render-concepts.mjs`, representing disclosed concept studies. `public/zyrix-mark.svg` is an original simple letterform. No external stock photography or client logos are used.
 
 The overlay menu is original GSAP code. The user explicitly chose this replacement for the inaccessible Framer module; no Framer module source or assets are included.
+
+## Downloaded photography — Poly Haven (CC0)
+
+The six photographs in `public/images/` are rectilinear, tone-mapped views of
+Poly Haven / HDRI Haven panoramas, licensed under CC0 1.0. These are inspiration
+images, not photographs of zyrixdev projects or offices. Sources were downloaded
+from the Three.js examples repository at commit
+`755f6e48c6865a83ae3e1e512adb3ea9e37a26da`:
+https://github.com/mrdoob/three.js/tree/755f6e48c6865a83ae3e1e512adb3ea9e37a26da/examples/textures/equirectangular
+
+| Local image | Source panorama / original source |
+| --- | --- |
+| coast.jpg | [Blouberg Sunrise 2](https://polyhaven.com/a/blouberg_sunrise_2), Greg Zaal |
+| venice.jpg | [Venice Sunset](https://polyhaven.com/a/venice_sunset) |
+| garden.jpg | [Spruit Sunrise](https://polyhaven.com/a/spruit_sunrise) |
+| city.jpg | [San Giuseppe Bridge](https://polyhaven.com/a/san_giuseppe_bridge) |
+| bridge.jpg | [Pedestrian Overpass](https://polyhaven.com/a/pedestrian_overpass) |
+| quarry.jpg | [Quarry 01](https://polyhaven.com/a/quarry_01) |
+
+License: https://polyhaven.com/license — https://creativecommons.org/publicdomain/zero/1.0/

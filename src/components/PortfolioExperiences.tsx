@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useState, useEffect, useRef } from "react";
 import {
   SiReact,
   SiTypescript,
@@ -14,7 +14,7 @@ import arrow from "@iconify-icons/solar/arrow-right-up-linear";
 import LogoLoop from "./react-bits/LogoLoop";
 import OptionWheel from "./react-bits/OptionWheel";
 import LineSidebar from "./react-bits/LineSidebar";
-import FlowingMenu from "./react-bits/FlowingMenu";
+import { useStoryProgress } from "./useStoryProgress";
 import FlipCard from "./react-bits/FlipCard";
 import TearTicket from "./react-bits/TearTicket";
 import LiveScene from "./LiveScene";
@@ -105,6 +105,7 @@ export function WorkCarousel({
   onSelect: (name: string) => void;
 }) {
   const [active, setActive] = useState(0);
+  const { ref, progress } = useStoryProgress();
   const fallback = (
     <div className="carousel-fallback">
       {conceptItems.map((item) => (
@@ -119,47 +120,55 @@ export function WorkCarousel({
     </div>
   );
   return (
-    <div className="work-experience">
-      <div className="gallery-instructions">
-        <span>FIVE IDEAS. FIVE DIFFERENT POSSIBILITIES.</span>
-        <span>DRAG TO EXPLORE / ← → KEYS</span>
-      </div>
-      <LiveScene className="flex-gallery" fallback={fallback}>
-        <Suspense fallback={fallback}>
-          <FlexCarousel
-            items={conceptItems}
-            preset="ribbon"
-            intro="none"
-            cardHeight={0.78}
-            gap={32}
-            radius={8}
-            squeeze={0.05}
-            bend={0.11}
-            tilt={0.03}
-            liquid={0}
-            captureWheel={false}
-            captions={false}
-            onChange={(i) => setActive(i)}
-            onSelect={(i) => onSelect(conceptItems[i].title)}
-          />
-        </Suspense>
-      </LiveScene>
-      <div className="work-directory">
-        {conceptItems.map((item, i) => (
-          <button
-            key={item.title}
-            className={active === i ? "is-active" : ""}
-            onClick={() => onSelect(item.title)}
-            aria-label={`Explore ${item.title} concept study`}
-          >
-            <span className="work-directory-number">0{i + 1}</span>
-            <span>
-              <b>{item.title}</b>
-              <small>{item.subtitle}</small>
-            </span>
-            <Icon icon={arrow} />
-          </button>
-        ))}
+    <div ref={ref} className="story-scroll work-scroll">
+      <div className="story-stage work-experience">
+        <div className="chapter-top">
+          <span>01 / IDEAS BECOME INTERFACES</span>
+          <span>SCROLL ↓ TO EXPLORE →</span>
+        </div>
+        <div className="gallery-instructions">
+          <span>FIVE IDEAS. FIVE DIFFERENT POSSIBILITIES.</span>
+          <span>SCROLL OR DRAG / ← → KEYS</span>
+        </div>
+        <LiveScene className="flex-gallery" fallback={fallback}>
+          <Suspense fallback={fallback}>
+            <FlexCarousel
+              items={conceptItems}
+              scrollPosition={progress * 4}
+              preset="ribbon"
+              intro="none"
+              cardHeight={0.78}
+              gap={32}
+              radius={8}
+              squeeze={0.05}
+              bend={0.11}
+              tilt={0.03}
+              liquid={0}
+              captureWheel={false}
+              captions={false}
+              onChange={(i) => setActive(i)}
+              onSelect={(i) => onSelect(conceptItems[i].title)}
+            />
+          </Suspense>
+        </LiveScene>
+        <div className="work-directory">
+          {conceptItems.map((item, i) => (
+            <button
+              key={item.title}
+              className={active === i ? "is-active" : ""}
+              onClick={() => onSelect(item.title)}
+              aria-label={`Explore ${item.title} concept study`}
+            >
+              <span className="work-directory-number">0{i + 1}</span>
+              <span>
+                <b>{item.title}</b>
+                <small>{item.subtitle}</small>
+              </span>
+              <Icon icon={arrow} />
+            </button>
+          ))}
+        </div>
+        <div className="chapter-progress" style={{ scale: `${progress} 1` }} />
       </div>
     </div>
   );
@@ -223,75 +232,87 @@ export function Capabilities({
   onContact: (service: string) => void;
 }) {
   const [selected, setSelected] = useState(0);
+  const [compact, setCompact] = useState(() => window.innerWidth <= 800);
+  useEffect(() => {
+    const media = matchMedia("(max-width:800px)");
+    const update = () => setCompact(media.matches);
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+  const { ref, progress } = useStoryProgress();
   const item = capabilities[selected];
   return (
     <section
       id="services"
       tabIndex={-1}
-      className="capabilities-section page-width section-space"
       aria-labelledby="capabilities-heading"
+      className="capabilities-section"
     >
-      <div className="section-heading reveal">
-        <div>
-          <span className="eyebrow section-index">02 / WHAT WE CAN MAKE</span>
-          <h2 id="capabilities-heading">
-            If you can imagine it.
+      <div ref={ref} className="story-scroll services-scroll">
+        <div className="story-stage service-stage">
+          <div className="chapter-top">
+            <span>02 / A WORLD OF POSSIBILITIES</span>
+            <span>SCROLL ↓ / DRAG ↕ / ARROW KEYS</span>
+          </div>
+          <h2 id="capabilities-heading" className="service-headline">
+            You imagine.
             <br />
-            <em>We can build it.</em>
+            <em>We make.</em>
           </h2>
-        </div>
-        <p>
-          Websites. Bots. Automations. Tools.
-          <br />
-          One studio. Every piece of the puzzle.
-        </p>
-      </div>
-      <div className="capability-stage">
-        <div className="wheel-panel">
-          <span className="wheel-instruction">
-            CHOOSE A DIRECTION <span>↕</span>
-          </span>
-          <div className="wheel-shell" data-lenis-prevent>
-            <OptionWheel
-              items={capabilities.map((c) => c.name)}
-              defaultSelected={0}
-              onChange={setSelected}
-              activeColor="#ff653b"
-              textColor="#b4b4a9"
-              fontSize={3.3}
-              inset={25}
-              spacing={1.4}
-              curve={0.7}
-              blur={0}
-              fade={0.06}
-              minOpacity={0.85}
-              tilt={3}
-            />
+          <div className="capability-stage">
+            <div className="wheel-panel">
+              <div className="wheel-shell">
+                <OptionWheel
+                  items={capabilities.map((c) => c.name)}
+                  defaultSelected={0}
+                  loop
+                  captureWheel={false}
+                  scrollPosition={progress * 9}
+                  onChange={setSelected}
+                  activeColor="#ff653b"
+                  textColor="#a9a99f"
+                  fontSize={compact ? 2.6 : 4.8}
+                  inset={20}
+                  spacing={1.5}
+                  curve={0.5}
+                  blur={0}
+                  fade={0.2}
+                  minOpacity={0.45}
+                  tilt={5}
+                />
+              </div>
+              <span className="wheel-footnote">
+                FIVE DISCIPLINES. ENDLESS CONNECTIONS.
+              </span>
+            </div>
+            <div
+              className="capability-detail"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              <span className="service-counter" aria-hidden="true">
+                0{selected + 1}
+                <small>/ 05</small>
+              </span>
+              <span className="eyebrow orange">{item.label}</span>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+              <div className="tags">
+                {item.tags.map((tag) => (
+                  <span key={tag}>{tag}</span>
+                ))}
+              </div>
+              <button
+                className="text-link"
+                onClick={() => onContact(item.name)}
+              >
+                Let’s build {item.name.toLowerCase()} <Icon icon={arrow} />
+              </button>
+            </div>
           </div>
-          <span className="wheel-footnote">
-            SCROLL, DRAG, OR USE THE ARROW KEYS
-          </span>
-        </div>
-        <div
-          className="capability-detail"
-          aria-live="polite"
-          aria-atomic="true"
-        >
-          <span className="eyebrow orange">{item.label}</span>
-          <h3>{item.title}</h3>
-          <p>{item.text}</p>
-          <div className="tags">
-            {item.tags.map((tag) => (
-              <span key={tag}>{tag}</span>
-            ))}
-          </div>
-          <button className="text-link" onClick={() => onContact(item.name)}>
-            Let’s build {item.name.toLowerCase()} <Icon icon={arrow} />
-          </button>
-          <img
-            src={`/work/${item.image}.png`}
-            alt={`${item.name} concept study`}
-            loading="lazy"
+          <div
+            className="chapter-progress"
+            style={{ scale: `${progress} 1` }}
           />
         </div>
       </div>
@@ -301,7 +322,11 @@ export function Capabilities({
 
 export function MetallicIdentity() {
   return (
-    <div className="metallic-identity" aria-label="Zyrix Z symbol" role="img">
+    <div
+      className="metallic-identity"
+      aria-label="zyrixdev Z symbol"
+      role="img"
+    >
       <span className="metallic-static" aria-hidden="true">
         Z
       </span>
@@ -353,288 +378,328 @@ const steps = [
 ];
 export function StudioProcess() {
   const [active, setActive] = useState(0);
+  const { ref, progress } = useStoryProgress();
+  const scrollStep = Math.min(3, Math.floor(progress * 4));
+  useEffect(() => setActive(scrollStep), [scrollStep]);
   return (
     <section
-      className="process-section page-width"
-      aria-labelledby="process-heading"
+      ref={ref}
+      className="story-scroll process-scroll"
+      aria-label="Our process"
     >
-      <span className="eyebrow section-index">04 / HOW WE GET THERE</span>
-      <div className="process-interactive">
-        <div className="process-navigation">
-          <h2 id="process-heading">
-            Clear steps.
-            <br />
-            <em>Great things.</em>
-          </h2>
-          <LineSidebar
-            items={["Discover", "Define", "Create", "Launch"]}
-            defaultActive={0}
-            onItemClick={setActive}
-            accentColor="#ff653b"
-            textColor="#b8b8ad"
-            markerColor="#6f6f63"
-            fontSize={1.15}
-            markerLength={45}
-            maxShift={12}
-            itemGap={23}
-            className="process-sidebar"
-          />
-        </div>
-        <div className="process-detail" aria-live="polite">
-          <span className="process-big-number">0{active + 1}</span>
-          <h3>{steps[active].title}</h3>
-          <p>{steps[active].text}</p>
-          <span className="process-deliverable">
-            <i />
-            {steps[active].deliverable}
-          </span>
+      <div
+        className="story-stage process-section page-width"
+        aria-labelledby="process-heading"
+      >
+        <span className="eyebrow section-index">04 / HOW WE GET THERE</span>
+        <div className="process-interactive">
+          <div className="process-navigation">
+            <h2 id="process-heading">
+              Clear steps.
+              <br />
+              <em>Great things.</em>
+            </h2>
+            <LineSidebar
+              items={["Discover", "Define", "Create", "Launch"]}
+              defaultActive={0}
+              active={active}
+              onItemClick={setActive}
+              accentColor="#ff653b"
+              textColor="#b8b8ad"
+              markerColor="#6f6f63"
+              fontSize={1.15}
+              markerLength={45}
+              maxShift={12}
+              itemGap={23}
+              className="process-sidebar"
+            />
+          </div>
+          <div className="process-detail" aria-live="polite">
+            <span className="process-big-number">0{active + 1}</span>
+            <h3>{steps[active].title}</h3>
+            <p>{steps[active].text}</p>
+            <span className="process-deliverable">
+              <i />
+              {steps[active].deliverable}
+            </span>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
+const photographs = [
+  {
+    src: "/images/coast.jpg",
+    alt: "Sunrise over the rocky South African coastline",
+    label: "Find a new perspective",
+  },
+  {
+    src: "/images/venice.jpg",
+    alt: "Warm sunset over the architecture of Venice",
+    label: "See the possibilities",
+  },
+  {
+    src: "/images/garden.jpg",
+    alt: "Soft morning light in a green garden",
+    label: "Leave room to grow",
+  },
+  {
+    src: "/images/city.jpg",
+    alt: "Historic architecture around San Giuseppe Bridge in Venice",
+    label: "Build with intention",
+  },
+  {
+    src: "/images/bridge.jpg",
+    alt: "A pedestrian bridge connecting the city",
+    label: "Connect the dots",
+  },
+  {
+    src: "/images/quarry.jpg",
+    alt: "Rock formations in an open quarry",
+    label: "Shape something new",
+  },
+];
+
+const spiralItems = photographs.map((p, id) => ({ ...p, id }));
+
 export function Playground({ onContact }: { onContact: () => void }) {
+  const { ref, progress } = useStoryProgress();
   const [torn, setTorn] = useState(false);
-  const [flipped, setFlipped] = useState(false);
-  const spiralItems = [...conceptItems, ...conceptItems].map((item, i) => ({
-    ...item,
-    id: i,
-    label: `${item.title} concept`,
-  }));
   return (
-    <section
-      id="playground"
-      tabIndex={-1}
-      className="playground-section section-space"
-    >
-      <div className="page-width">
-        <div className="section-heading reveal">
-          <div>
-            <span className="eyebrow section-index">
-              05 / CURIOSITY IS PART OF THE PROCESS
-            </span>
-            <h2>
-              A little play.
-              <br />
-              <em>A lot of possibility.</em>
-            </h2>
-          </div>
-          <p>
-            Drag, flip, pull. Go on.
-            <br />
-            The details are meant to be felt.
-          </p>
-        </div>
-        <div className="playground-grid">
-          <div className="spiral-experiment">
-            <div className="experiment-label">
-              <span>01 / INFINITE POSSIBILITIES</span>
-              <span>DRAG TO EXPLORE</span>
+    <>
+      <section
+        id="playground"
+        tabIndex={-1}
+        className="spiral-chapter"
+        aria-labelledby="spiral-heading"
+      >
+        <div ref={ref} className="story-scroll spiral-scroll">
+          <div className="story-stage spiral-scene">
+            <div className="chapter-top">
+              <span>05 / CHANGE YOUR PERSPECTIVE</span>
+              <span>SCROLL ↓ / DRAG ↔</span>
+            </div>
+            <div className="spiral-copy">
+              <h2 id="spiral-heading">
+                Ideas don’t move
+                <br />
+                <em>in straight lines.</em>
+              </h2>
+              <p>
+                A wider world. A different angle.
+                <br />
+                That’s where the next idea begins.
+              </p>
             </div>
             <LiveScene
               className="spiral-stage"
               fallback={
                 <img
-                  src="/work/pulse.png"
-                  alt="Pulse automation concept"
+                  src="/images/coast.jpg"
+                  alt="Coastal sunrise"
                   loading="lazy"
                 />
               }
             >
-              <Suspense
-                fallback={
-                  <img src="/work/relay.png" alt="Relay concept study" />
-                }
-              >
+              <Suspense fallback={null}>
                 <InfiniteSpiral
                   items={spiralItems}
-                  animationMode="drag"
-                  radius={170}
-                  cardWidth={170}
-                  cardHeight={127}
-                  verticalSpacing={74}
-                  cardsPerTurn={5}
-                  edgeBlur={2}
-                  cardRadius={6}
-                  centerScale={1.2}
-                  speed={0.35}
+                  scrollPosition={progress * 18}
+                  animationMode="scroll"
+                  speed={0.16}
+                  radius={280}
+                  cardWidth={280}
+                  cardHeight={205}
+                  verticalSpacing={145}
+                  cardsPerTurn={6}
+                  edgeBlur={0}
+                  cardRadius={4}
+                  centerScale={1.05}
+                  pauseOnHover={false}
                 />
               </Suspense>
             </LiveScene>
-            <p>Ideas don’t move in straight lines.</p>
-          </div>
-          <div className="flip-experiment">
-            <div className="experiment-label">
-              <span>02 / A DIFFERENT PERSPECTIVE</span>
-              <span>CLICK TO FLIP</span>
+            <div className="spiral-caption">
+              <span>INSPIRATION IS EVERYWHERE.</span>
+              <span>
+                {String(Math.floor(progress * 99)).padStart(2, "0")} / ∞
+              </span>
             </div>
-            <FlipCard
-              flipped={flipped}
-              onFlipChange={setFlipped}
-              width={350}
-              height={360}
-              radius={10}
-              background="#f0eee7"
-              color="#1f211b"
-              className="studio-flip-card"
-              ariaLabel="Flip the studio philosophy card"
-              tiltMax={6}
-              hoverScale={1.01}
-              front={
-                <div className="philosophy-face">
-                  <span>THE ZYRIX WAY / 001</span>
-                  <b>
-                    Good code.
-                    <br />
-                    Great design.
-                    <br />
-                    <em>No shortcuts.</em>
-                  </b>
-                  <span className="philosophy-bottom">
-                    THERE’S MORE TO IT <Icon icon={arrow} />
-                  </span>
-                </div>
-              }
-              back={
-                <div className="philosophy-face philosophy-back">
-                  <span>THE THINKING BEHIND THE MAKING</span>
-                  <h3>
-                    Made for people.
-                    <br />
-                    Built with purpose.
-                  </h3>
-                  <p>
-                    Clear interfaces. Thoughtful interactions. Reliable systems.
-                    We believe the best software gets the details right.
-                  </p>
-                  <span className="philosophy-bottom">
-                    THAT’S OUR KIND OF SOFTWARE. <Icon icon={arrow} />
-                  </span>
-                </div>
-              }
-            />
-            <p>Design and engineering. Two sides of the same idea.</p>
           </div>
         </div>
-        <div className="invitation">
-          <div>
-            <span className="eyebrow orange">YOUR NEXT CHAPTER</span>
-            <h3>
-              Consider this
-              <br />
-              <em>your invitation.</em>
-            </h3>
-            <p>
-              Pull the ticket. Start a conversation.
-              <br />
-              Let’s see where your idea takes us.
-            </p>
-          </div>
-          <div className="ticket-area">
-            <TearTicket
-              torn={torn}
-              onTear={() => {
-                setTorn(true);
-                onContact();
-              }}
-              width={520}
-              height={215}
-              stubSize={145}
-              radius={12}
-              background="#ff653b"
-              stubBackground="#f28160"
-              color="#241c15"
-              rotate={-3}
-              tiltMax={4}
-              holes={11}
-              holeSize={3}
-              recenter={false}
-              ariaLabel="Tear ticket to start a project"
-              stub={
-                <div className="ticket-stub">
-                  <span>
-                    START
-                    <br />
-                    SOMETHING.
-                  </span>
-                  <Icon icon={arrow} />
-                  <small>PULL HERE</small>
-                </div>
-              }
-            >
-              <div className="ticket-body">
-                <span>ZYRIX / AN OPEN INVITATION</span>
-                <strong>
-                  One bold idea.
+      </section>
+      <PerspectiveCards />
+      <section className="invitation invitation-chapter page-width">
+        <div>
+          <span className="eyebrow orange">07 / YOUR NEXT CHAPTER</span>
+          <h3>
+            Consider this
+            <br />
+            <em>your invitation.</em>
+          </h3>
+          <p>
+            One conversation can change the direction.
+            <br />
+            Pull the ticket. Let’s find out where it goes.
+          </p>
+        </div>
+        <div className="ticket-area">
+          <TearTicket
+            torn={torn}
+            onTear={() => {
+              setTorn(true);
+              onContact();
+            }}
+            width={520}
+            height={250}
+            stubSize={145}
+            radius={12}
+            background="#ff653b"
+            stubBackground="#f28160"
+            color="#241c15"
+            rotate={-3}
+            tiltMax={4}
+            holes={11}
+            holeSize={3}
+            recenter={false}
+            ariaLabel="Tear ticket to start a project"
+            stub={
+              <div className="ticket-stub">
+                <span>
+                  START
                   <br />
-                  <em>Endless potential.</em>
-                </strong>
-                <small>ADMIT ONE GREAT CONVERSATION</small>
+                  SOMETHING.
+                </span>
+                <Icon icon={arrow} />
+                <small>PULL HERE</small>
               </div>
-            </TearTicket>
-            {torn && (
-              <button className="ticket-reset" onClick={() => setTorn(false)}>
-                Restore invitation ↺
-              </button>
-            )}
-          </div>
+            }
+          >
+            <div className="ticket-body">
+              <span>ZYRIXDEV / AN OPEN INVITATION</span>
+              <strong>
+                One bold idea.
+                <br />
+                <em>Endless potential.</em>
+              </strong>
+              <small>ADMIT ONE GREAT CONVERSATION</small>
+            </div>
+          </TearTicket>
+          {torn && (
+            <button className="ticket-reset" onClick={() => setTorn(false)}>
+              Restore invitation ↺
+            </button>
+          )}
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }
 
-export function ServiceFlow({
-  onContact,
-}: {
-  onContact: (name: string) => void;
-}) {
+const principles = [
+  [
+    "01",
+    "Make it clear.",
+    "Good software feels obvious.",
+    "We simplify the complex, so people can focus on what they came to do.",
+    "Clarity",
+  ],
+  [
+    "02",
+    "Make it move.",
+    "Every detail has a purpose.",
+    "Motion guides attention, explains a change, and makes a product feel alive.",
+    "Feeling",
+  ],
+  [
+    "03",
+    "Make it matter.",
+    "Build for the real world.",
+    "Reliable foundations. Thoughtful performance. Software your team can grow with.",
+    "Purpose",
+  ],
+];
+function PerspectiveCards() {
+  const { ref, progress } = useStoryProgress();
+  const rail = useRef<HTMLDivElement>(null);
+  const [flipped, setFlipped] = useState([false, false, false]);
+  const step = Math.floor(progress * 6);
+  useEffect(() => {
+    setFlipped(principles.map((_, i) => step >= i * 2 + 1));
+  }, [step]);
+  useEffect(() => {
+    if (rail.current && !matchMedia("(prefers-reduced-motion: reduce)").matches)
+      rail.current.scrollLeft =
+        progress * (rail.current.scrollWidth - rail.current.clientWidth);
+  }, [progress]);
   return (
-    <section className="service-flow" aria-labelledby="flow-heading">
-      <div className="page-width flow-heading">
-        <span className="eyebrow" id="flow-heading">
-          WHAT’S YOUR NEXT MOVE?
-        </span>
-        <span className="eyebrow">LET’S MAKE IT HAPPEN.</span>
-      </div>
-      <LiveScene
-        className="flow-menu"
-        fallback={
-          <div className="flow-fallback">
-            {capabilities.map((c) => (
-              <button key={c.name} onClick={() => onContact(c.name)}>
-                {c.name} ↗
-              </button>
-            ))}
-          </div>
-        }
-      >
-        <div
-          className="flow-live"
-          onClick={(e) => {
-            const link = (e.target as HTMLElement).closest("a");
-            if (link) {
-              e.preventDefault();
-              onContact(link.textContent?.trim() || "Software");
-            }
-          }}
-        >
-          <FlowingMenu
-            items={capabilities.map((c) => ({
-              text: c.name,
-              link: "#contact",
-              image: `/work/${c.image}.png`,
-            }))}
-            textColor="#eeece4"
-            bgColor="#111110"
-            marqueeBgColor="#ff653b"
-            marqueeTextColor="#1b1b15"
-            borderColor="#ffffff24"
-            speed={25}
-          />
+    <section
+      ref={ref}
+      className="story-scroll principles-scroll"
+      aria-labelledby="principles-heading"
+    >
+      <div className="story-stage principles-stage">
+        <div className="chapter-top">
+          <span>06 / THE OTHER SIDE OF GOOD SOFTWARE</span>
+          <span>SCROLL ↓ / SWIPE ↔ / CLICK TO FLIP</span>
         </div>
-      </LiveScene>
+        <h2 id="principles-heading">
+          A little depth.
+          <br />
+          <em>A lot of intention.</em>
+        </h2>
+        <div
+          className="principles-rail"
+          ref={rail}
+          tabIndex={0}
+          aria-label="Studio philosophy cards, scroll horizontally"
+        >
+          {principles.map(([n, title, back, text, label], i) => (
+            <div className="principle-item" key={n}>
+              <FlipCard
+                flipped={flipped[i]}
+                onFlipChange={(v) =>
+                  setFlipped((prev) => prev.map((f, j) => (j === i ? v : f)))
+                }
+                width={430}
+                height={430}
+                radius={4}
+                background={["#ece8dc", "#bfcca8", "#f58159"][i]}
+                color="#20221c"
+                ariaLabel={`Flip the ${label.toLowerCase()} card`}
+                tiltMax={5}
+                hoverScale={1.01}
+                front={
+                  <div className="philosophy-face">
+                    <span>ZYRIXDEV / {n}</span>
+                    <b>
+                      {title}
+                      <br />
+                      <em>{label}.</em>
+                    </b>
+                    <span className="philosophy-bottom">
+                      TURN AN IDEA INTO SOMETHING <Icon icon={arrow} />
+                    </span>
+                  </div>
+                }
+                back={
+                  <div className="philosophy-face philosophy-back">
+                    <span>THE THINKING BEHIND THE MAKING / {n}</span>
+                    <h3>{back}</h3>
+                    <p>{text}</p>
+                    <span className="philosophy-bottom">
+                      THAT’S OUR KIND OF SOFTWARE. <Icon icon={arrow} />
+                    </span>
+                  </div>
+                }
+              />
+            </div>
+          ))}
+        </div>
+        <div className="chapter-progress" style={{ scale: `${progress} 1` }} />
+      </div>
     </section>
   );
 }
@@ -643,11 +708,11 @@ export function FooterWordmark() {
   return (
     <LiveScene
       className="footer-techtext"
-      fallback={<span className="techtext-fallback">ZYRIX.DEV</span>}
+      fallback={<span className="techtext-fallback">ZYRIXDEV</span>}
     >
-      <Suspense fallback={<span className="techtext-fallback">ZYRIX.DEV</span>}>
+      <Suspense fallback={<span className="techtext-fallback">ZYRIXDEV</span>}>
         <TechText
-          text="ZYRIX.DEV"
+          text="ZYRIXDEV"
           fontFamily="Manrope Variable"
           fontWeight={650}
           fontSize={210}

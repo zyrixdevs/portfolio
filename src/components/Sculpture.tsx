@@ -48,8 +48,8 @@ export default function Sculpture() {
       frame = 0;
       if (!visible || document.hidden || reduced.matches || lost) return;
       time += Math.min((now - (last || now)) / 1000, 0.04); last = now;
-      sculpture.rotation.y += ((-0.4 + pointerX * 0.32 + Math.sin(time * 0.2) * 0.28) - sculpture.rotation.y) * 0.035;
-      sculpture.rotation.x += ((0.35 + pointerY * 0.2) - sculpture.rotation.x) * 0.035;
+      sculpture.rotation.y += ((-0.4 + (window.scrollY / window.innerHeight) * 1.5 + pointerX * 0.32 + Math.sin(time * 0.2) * 0.28) - sculpture.rotation.y) * 0.035;
+      sculpture.rotation.x += ((0.35 + (window.scrollY / window.innerHeight) * 0.4 + pointerY * 0.2) - sculpture.rotation.x) * 0.035;
       sculpture.rotation.z = -0.3 + Math.sin(time * 0.17) * 0.12;
       sculpture.position.y = Math.sin(time * 0.6) * 0.08;
       renderer.render(scene, camera);

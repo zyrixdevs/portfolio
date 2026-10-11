@@ -9,3 +9,6 @@ playwright-report/
 *.tsbuildinfo
 __pycache__/
 *.pyc
+.dev.vars
+.dev.vars.*
+!.dev.vars.example

@@ -14,6 +14,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
+import StoryIntro from "./components/StoryIntro";
 import Magnet from "./components/react-bits/Magnet";
 import AnimatedContent from "./components/react-bits/AnimatedContent";
 import { CircleButtons } from "./components/threeui/CircleButtons";
@@ -26,7 +27,6 @@ import {
   MetallicIdentity,
   StudioProcess,
   Playground,
-  ServiceFlow,
   FooterWordmark,
   capabilities,
 } from "./components/PortfolioExperiences";
@@ -91,7 +91,8 @@ export default function App() {
   const [selected, setSelected] = useState<Project | null>(null);
   const [contactOpen, setContactOpen] = useState(false);
   const [briefReady, setBriefReady] = useState(false);
-  const [emailLink, setEmailLink] = useState("");
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState("");
   const dialog = useRef<HTMLDialogElement>(null);
   const contactDialog = useRef<HTMLDialogElement>(null);
 
@@ -115,20 +116,81 @@ export default function App() {
           { y: 16, stagger: 0.1, duration: 0.65 },
           "-=0.7",
         );
-      const reveals = gsap.utils
-        .toArray<HTMLElement>(".reveal")
-        .map((el) =>
-          gsap.from(el, {
-            y: 40,
-            duration: 0.85,
-            ease: "power3.out",
-            scrollTrigger: { trigger: el, start: "top 88%", once: true },
-          }),
+      const reveals = gsap.utils.toArray<HTMLElement>(".reveal").map((el) =>
+        gsap.from(el, {
+          y: 40,
+          duration: 0.85,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 95%",
+            end: "top 50%",
+            scrub: 1,
+          },
+        }),
+      );
+      const storyMotion = gsap.context(() => {
+        gsap.to(".hero-art", {
+          y: 100,
+          rotate: 8,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".hero",
+            start: "top top",
+            end: "bottom top",
+            scrub: 1,
+          },
+        });
+        gsap.fromTo(
+          ".metallic-identity",
+          { rotate: -9, scale: 0.85 },
+          {
+            rotate: 9,
+            scale: 1.05,
+            ease: "none",
+            scrollTrigger: {
+              trigger: "#studio",
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 1,
+            },
+          },
         );
+        gsap.fromTo(
+          ".ticket-area",
+          { rotate: -8, y: 70 },
+          {
+            rotate: 3,
+            y: -20,
+            ease: "none",
+            scrollTrigger: {
+              trigger: ".invitation-chapter",
+              start: "top bottom",
+              end: "bottom 40%",
+              scrub: 1,
+            },
+          },
+        );
+        gsap.fromTo(
+          ".contact-main h2",
+          { x: -50 },
+          {
+            x: 0,
+            ease: "none",
+            scrollTrigger: {
+              trigger: "#contact",
+              start: "top bottom",
+              end: "top 30%",
+              scrub: 1,
+            },
+          },
+        );
+      });
       document.fonts.ready.then(() => ScrollTrigger.refresh());
       return () => {
         gsap.ticker.remove(tick);
         lenis.destroy();
+        storyMotion.revert();
         intro.revert();
         reveals.forEach((tween) => {
           tween.scrollTrigger?.kill();
@@ -154,6 +216,7 @@ export default function App() {
   }, [selected, contactOpen]);
   const openContact = () => {
     setBriefReady(false);
+    setSendError("");
     setMenuOpen(false);
     setContactOpen(true);
   };
@@ -171,26 +234,49 @@ export default function App() {
     contactDialog.current?.close();
     setContactOpen(false);
   };
-  const submitBrief = (event: FormEvent<HTMLFormElement>) => {
+  const submitBrief = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const body = `Hi Zyrix,\n\nI'm ${data.get("name")}.\nEmail: ${data.get("email")}\nInterested in: ${data.get("service")}\n\n${data.get("message")}\n\nLet's make something great.`;
-    const url = `mailto:imzyrixx@gmail.com?subject=${encodeURIComponent(`A new project — ${data.get("name")}`)}&body=${encodeURIComponent(body)}`;
-    setEmailLink(url);
-    setBriefReady(true);
+    if (sending) return;
+    const data = Object.fromEntries(new FormData(event.currentTarget));
+    setSending(true);
+    setSendError("");
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+        signal: AbortSignal.timeout(15000),
+      });
+      const result = await response.json();
+      if (!response.ok || result.ok !== true)
+        throw new Error(
+          result.error ||
+            "Your message could not be sent. Please try again or email us directly.",
+        );
+      setBriefReady(true);
+    } catch (error) {
+      setSendError(
+        error instanceof Error && error.name !== "SyntaxError"
+          ? error.message
+          : "Sending is temporarily unavailable. Please email imzyrixx@gmail.com.",
+      );
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
     <>
+      <StoryIntro />
       <a href="#main" className="skip-link">
         Skip to content
       </a>
       <header className="site-header">
-        <a href="#" className="wordmark" aria-label="Zyrix home">
+        <a href="#" className="wordmark" aria-label="zyrixdev home">
           <span className="brand-symbol">
             <Arrow />
           </span>
-          zyrix<span className="wordmark-dot">*</span>
+          zyrixdev<span className="wordmark-dot">*</span>
         </a>
         <nav className="desktop-nav" aria-label="Main navigation">
           <a href="#work">
@@ -291,13 +377,13 @@ export default function App() {
         <TechnologyLoop />
 
         <section
-          className="work-section page-width section-space"
+          className="work-section section-space"
           id="work"
           tabIndex={-1}
           aria-labelledby="work-heading"
         >
           <AnimatedContent distance={35}>
-            <div className="section-heading">
+            <div className="section-heading page-width">
               <div>
                 <span className="eyebrow section-index">
                   01 / SELECTED EXPLORATIONS
@@ -318,7 +404,7 @@ export default function App() {
               setSelected(projects.find((p) => p.name === name) || projects[0])
             }
           />
-          <p className="work-note">
+          <p className="work-note page-width">
             <span>↳</span> Studio experiments, not client commissions. Made to
             explore what’s possible.
           </p>
@@ -349,7 +435,7 @@ export default function App() {
               </h2>
               <div className="studio-description">
                 <p>
-                  We’re Zyrix. Designers, developers, and problem-solvers who
+                  We’re zyrixdev. Designers, developers, and problem-solvers who
                   like making complicated things feel simple. From a sharp
                   website to a bot that saves your team hours, we build around
                   what you need.
@@ -374,7 +460,6 @@ export default function App() {
 
         <StudioProcess />
         <Playground onContact={openContact} />
-        <ServiceFlow onContact={startProject} />
 
         <section
           id="contact"
@@ -416,11 +501,11 @@ export default function App() {
       <footer className="page-width">
         <FooterWordmark />
         <div className="footer-top">
-          <a className="wordmark" href="#" aria-label="Zyrix home">
+          <a className="wordmark" href="#" aria-label="zyrixdev home">
             <span className="brand-symbol">
               <Arrow />
             </span>
-            zyrix<span className="wordmark-dot">*</span>
+            zyrixdev<span className="wordmark-dot">*</span>
           </a>
           <p>Digital craft. Human connection.</p>
           <a
@@ -433,7 +518,9 @@ export default function App() {
           <a href="#main">Back to top ↑</a>
         </div>
         <div className="footer-bottom">
-          <span>© {new Date().getFullYear()} Zyrix. All rights reserved.</span>
+          <span>
+            © {new Date().getFullYear()} zyrixdev. All rights reserved.
+          </span>
           <span>DESIGNED WITH INTENT. BUILT WITH CARE.</span>
           <span className="footer-status">
             <i /> ALWAYS EXPLORING
@@ -519,23 +606,24 @@ export default function App() {
           </h2>
           {briefReady && (
             <div className="brief-ready" role="status">
-              <h3>Your introduction is ready.</h3>
+              <h3>Your next chapter starts here.</h3>
               <p>
-                Open your email app to review and send it to imzyrixx@gmail.com.
-                Nothing has been sent yet.
+                Your message has been accepted for delivery to
+                imzyrixx@gmail.com. We’ll reply to the email you provided.
               </p>
-              <a className="button button-light" href={emailLink}>
-                Open email app <Arrow />
-              </a>
               <button
                 className="text-link"
                 onClick={() => setBriefReady(false)}
               >
-                Edit your introduction
+                Write another message
               </button>
             </div>
           )}
-          <form hidden={briefReady} onSubmit={submitBrief}>
+          <form hidden={briefReady} onSubmit={submitBrief} aria-busy={sending}>
+            <label className="contact-honeypot" aria-hidden="true">
+              Company website
+              <input name="website" tabIndex={-1} autoComplete="off" />
+            </label>
             <div className="form-row">
               <label>
                 Your name
@@ -583,14 +671,24 @@ export default function App() {
               />
             </label>
             <div className="form-submit">
-              <p>We’ll prepare an email for you to review and send.</p>
+              <p>
+                {sending
+                  ? "Sending your idea…"
+                  : "Straight to our inbox. The start of something good."}
+              </p>
               <CircleButtons
                 variant="mail"
-                ariaLabel="Prepare project email"
+                ariaLabel="Send project message"
+                disabled={sending}
                 type="submit"
                 className="contact-submit"
               />
             </div>
+            {sendError && (
+              <p role="alert" className="contact-error">
+                {sendError}
+              </p>
+            )}
           </form>
           <a className="direct-email" href="mailto:imzyrixx@gmail.com">
             Or email us directly: imzyrixx@gmail.com ↗

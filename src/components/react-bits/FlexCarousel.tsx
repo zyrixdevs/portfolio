@@ -43,6 +43,7 @@ export interface FlexCarouselProps extends Partial<PresetValues> {
   interval?: number;
   captions?: boolean;
   captureWheel?: boolean;
+  scrollPosition?: number;
   onChange?: (index: number, item: FlexCarouselItem) => void;
   onSelect?: (index: number, item: FlexCarouselItem) => void;
   className?: string;
@@ -116,6 +117,7 @@ interface Draw {
 
 interface Engine {
   wake: () => void;
+  seek: (position: number) => void;
   setItems: (items: FlexCarouselItem[]) => void;
 }
 
@@ -409,6 +411,7 @@ const FlexCarousel = ({
   interval = 4,
   captions = true,
   captureWheel = true,
+  scrollPosition,
   onChange,
   onSelect,
   className = '',
@@ -418,6 +421,9 @@ const FlexCarousel = ({
   const settingsRef = useRef<Settings | null>(null);
   const itemsRef = useRef<FlexCarouselItem[]>(items);
   const engineRef = useRef<Engine | null>(null);
+  useEffect(() => {
+    if (scrollPosition !== undefined) engineRef.current?.seek(scrollPosition);
+  }, [scrollPosition]);
   const callbacksRef = useRef<Callbacks>({ onChange, onSelect });
   const [active, setActive] = useState(0);
   const [unavailable, setUnavailable] = useState(false);
@@ -1335,6 +1341,14 @@ const FlexCarousel = ({
     intersectionObserver.observe(container);
 
     engineRef.current = {
+      seek: (position) => {
+        const m = metrics(settingsRef.current!);
+        if (!m.centers.length) return;
+        const i = Math.min(Math.floor(position), m.centers.length - 1);
+        const next = Math.min(i + 1, m.centers.length - 1);
+        goal = m.centers[i] + (m.centers[next] - m.centers[i]) * (position - i);
+        mode = "spring"; dirty = true; start();
+      },
       wake: () => {
         dirty = true;
         start();
@@ -1344,6 +1358,7 @@ const FlexCarousel = ({
 
     resize();
     setItems(itemsRef.current);
+    if (scrollPosition !== undefined) engineRef.current.seek(scrollPosition);
 
     return () => {
       alive = false;
