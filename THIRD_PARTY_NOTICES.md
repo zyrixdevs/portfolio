@@ -10,7 +10,9 @@ Motion uses GSAP and Lenis, with Lenis as the sole smooth-scroll engine. Three.j
 
 Source: https://github.com/DavidHDev/react-bits
 
-Vendored TypeScript/Tailwind components: `SpotlightCard`, `Magnet`, and `AnimatedContent` under `src/components/react-bits/`. Adapted Magnet to disable pointer motion on coarse pointers and reduced motion; adapted AnimatedContent to retain visible content and honor reduced motion.
+Vendored TypeScript/Tailwind components under `src/components/react-bits/`: `SpotlightCard`, `Magnet`, `AnimatedContent`, `FlexCarousel`, `MetallicPaint`, `TechText`, `LogoLoop`, `OptionWheel`, `LineSidebar`, `FlowingMenu`, `InfiniteSpiral`, `FlipCard`, and `TearTicket`. The latter ten were supplied by the user as full React Bits component sources; the unnamed attachments contained FlipCard and TearTicket.
+
+Integration adaptations: Magnet respects coarse pointers/reduced motion; AnimatedContent retains visible content and honors reduced motion; FlexCarousel has a no-WebGL/reduced-motion static gallery; MetallicPaint exposes a successful render state for its fallback; LineSidebar uses native buttons and accessible index contrast; FlowingMenu clamps its duplication count, pauses its marquee except on hover, respects reduced motion, and hides decorative copies from screen readers. LiveScene bounds animation work to visible scenes and visible tabs. LogoLoop includes an external pause control.
 
 Copyright © 2026 David Haz. MIT + Commons Clause. See [licenses/react-bits.md](licenses/react-bits.md). Included as components of this website, not as a standalone component product.
 
@@ -24,7 +26,10 @@ Vendored `CircleButtons` and its stylesheet under `src/components/threeui/`, use
 
 - Manrope Variable and Instrument Serif are self-hosted through Fontsource. SIL Open Font License: [Manrope](licenses/manrope.txt), [Instrument Serif](licenses/instrument-serif.txt).
 - Interface icons use Solar through Iconify (`@iconify-icons/solar`), licensed CC BY 4.0; source: https://github.com/480-Design/Solar-Icon-Set. The simple Zyrix arrow mark is authored for this site.
+- Technology logos use Simple Icons via `react-icons/si` (Simple Icons: CC0; React Icons: MIT). They identify technologies the studio works with and do not imply endorsement or sponsorship.
 
 ## Assets
 
-`public/sculpture.png` is a static capture of this site's original Three.js scene. `public/social.jpg` is a capture of the original site hero. Project visuals are original HTML/interface compositions representing disclosed concept studies. No external stock photography or client logos are used.
+`public/sculpture.png` is a static capture of this site's original Three.js scene. `public/social.jpg` captures the current hero. `public/work/*.png` are original HTML/interface compositions authored in `scripts/render-concepts.mjs`, representing disclosed concept studies. `public/zyrix-mark.svg` is an original simple letterform. No external stock photography or client logos are used.
+
+The overlay menu is original GSAP code. The user explicitly chose this replacement for the inaccessible Framer module; no Framer module source or assets are included.

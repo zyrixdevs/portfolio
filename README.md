@@ -1,6 +1,25 @@
-# Zyrix — Beyond ordinary.
+# Zyrix — Code meets possibility.
 
-A responsive digital studio portfolio built with React, TypeScript, Vite, Tailwind CSS, and Three.js. Includes an original interactive 3D sculpture, concept study dialogs, accessible mobile navigation, GSAP/Lenis motion, and an email inquiry composer addressed to `imzyrixx@gmail.com`.
+A responsive software studio portfolio built with React, TypeScript, Vite, Tailwind CSS, and Three.js. Zyrix's capabilities span websites, bots, automations, tools, and custom software. Includes an original interactive 3D sculpture, five concept studies, a GSAP overlay menu, Lenis smooth scrolling, ScrollTrigger section reveals, and an email inquiry composer addressed to `imzyrixx@gmail.com`.
+
+## Interactive components
+
+All ten supplied React Bits components are integrated into the site:
+
+| Component | Use |
+| --- | --- |
+| FlexCarousel | Draggable concept gallery with keyboard controls and a static fallback |
+| MetallicPaint | Copper studio identity mark |
+| TechText | Interactive footer wordmark |
+| LogoLoop | Technology strip with pause/resume control |
+| OptionWheel | Capability selection and relevant inquiry type |
+| LineSidebar | Keyboard-accessible process navigation |
+| FlowingMenu | Animated service links that open the inquiry composer |
+| InfiniteSpiral | Drag-controlled concept exploration |
+| FlipCard | Two-sided studio philosophy card |
+| TearTicket | A project invitation that opens the contact form |
+
+The Framer module was replaced with an original GSAP implementation at the user's request. There are no remote Framer runtime imports. Motion remains a dependency of the supplied FlipCard and TearTicket. GSAP controls the page/menu transitions; Lenis is the only smooth-scroll engine. Heavy visual components load lazily and unmount offscreen or when the tab is hidden.
 
 ## Development
 
@@ -20,17 +39,21 @@ npm run build
 npm test
 ```
 
-Tests use Chromium at `/usr/bin/chromium`. Set `CHROMIUM_PATH` to another installed Chromium executable when needed. Tests cover desktop/mobile rendering, WebGL startup, dialogs, email composition, mobile navigation, reduced motion, no-JavaScript content, and axe accessibility checks.
+Tests use Chromium at `/usr/bin/chromium`. Set `CHROMIUM_PATH` to another installed Chromium executable when needed. Tests cover desktop/mobile rendering, WebGL and no-WebGL modes, concept dialogs, email composition, overlay focus handling, wheel and carousel keyboard interaction, process navigation, flip-card interaction, tear-ticket/reset behavior, service links, reduced motion, no-JavaScript content, and axe accessibility checks.
 
 ## Content
 
-The Orbit, Forma, and Parallel pieces are original **concept studies**, not client work or live applications. Replace them with verified organization projects when available. The contact form prepares a `mailto:` link; visitors review and send through their email application. It does not silently submit or store personal information.
+The Orbit, Relay, Pulse, Forma, and Parallel pieces are original **concept studies**, not client work or live applications. Sample metrics are illustrative interface data. Replace these studies with verified organization projects when available. `node scripts/render-concepts.mjs` regenerates their locally authored interface images with Chromium. Technology logos identify tools, not customers or partnerships.
+
+The contact form prepares a `mailto:` link; visitors review and send through their email application. It does not silently submit or store personal information. Service selections prefill the inquiry type. Tearing the invitation opens the form and makes no booking or reservation.
 
 ## Cloudflare Pages
 
 Project name: `zyrix-portfolio`. Intended production hostname: `dev.zyrix.qzz.io`.
 
 For a Git-connected Pages project, choose `zyrixdevs/portfolio`, production branch `main`, build command `npm run build`, and output directory `dist`.
+
+The build command must be set in the Pages project settings. The Wrangler `pages_build_output_dir` setting only identifies the output; it does not run the build. Leaving the build command empty results in `dist not found`.
 
 For a direct deployment, provide `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` securely, then run:
 
