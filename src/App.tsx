@@ -15,6 +15,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
 import StoryIntro from "./components/StoryIntro";
+import SystemLab from "./components/SystemLab";
+import ChapterDial from "./components/ChapterDial";
 import Magnet from "./components/react-bits/Magnet";
 import AnimatedContent from "./components/react-bits/AnimatedContent";
 import { CircleButtons } from "./components/threeui/CircleButtons";
@@ -131,8 +133,8 @@ export default function App() {
       );
       const storyMotion = gsap.context(() => {
         gsap.to(".hero-art", {
-          y: 100,
-          rotate: 8,
+          y: 60,
+          rotate: 0,
           ease: "none",
           scrollTrigger: {
             trigger: ".hero",
@@ -268,6 +270,7 @@ export default function App() {
   return (
     <>
       <StoryIntro />
+      <ChapterDial />
       <a href="#main" className="skip-link">
         Skip to content
       </a>
@@ -321,35 +324,30 @@ export default function App() {
           <div className="hero-content">
             <div className="hero-text">
               <h1 id="hero-heading">
-                <span className="hero-line">Code meets</span>
-                <span className="hero-line serif orange">possibility.</span>
+                <span className="hero-line">From a spark.</span>
+                <span className="hero-line serif orange">To a system.</span>
               </h1>
               <p className="hero-copy">
-                Beautiful websites. Clever bots. Effortless automations.
+                We turn the “what if” into the thing you can’t put down.
                 <br className="desktop-break" /> We build the software behind
                 your next big idea.
               </p>
               <div className="hero-actions">
                 <Magnet padding={24} magnetStrength={7}>
                   <a className="button button-light" href="#work">
-                    Explore our work <Arrow />
+                    Enter the explorations <Arrow />
                   </a>
                 </Magnet>
-                <a className="text-link" href="#studio">
-                  Meet the studio <Arrow />
+                <a className="text-link" href="#lab">
+                  Try the experiment <Arrow />
                 </a>
               </div>
             </div>
-            <div className="hero-art">
-              <div className="art-cross top-left">+</div>
-              <div className="art-cross bottom-right">+</div>
-              <span className="art-label">
-                FIG. 01 — THINKING IN NEW DIMENSIONS
-              </span>
+            <div className="hero-art instrument-art">
               <Suspense
                 fallback={
                   <img
-                    src="/sculpture.png"
+                    src="/engine-poster.svg"
                     alt=""
                     className="sculpture-loading"
                   />
@@ -357,10 +355,6 @@ export default function App() {
               >
                 <Sculpture />
               </Suspense>
-              <div className="art-caption">
-                <i /> A DIFFERENT PERSPECTIVE.
-              </div>
-              <span className="art-number">[ Z / 001 ]</span>
             </div>
           </div>
           <div className="hero-bottom">
@@ -411,6 +405,7 @@ export default function App() {
         </section>
 
         <Capabilities onContact={startProject} />
+        <SystemLab onContact={startProject} />
 
         <section
           id="studio"

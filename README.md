@@ -2,6 +2,12 @@
 
 A responsive software studio portfolio built with React, TypeScript, Vite, Tailwind CSS, and Three.js. zyrixdev’s capabilities span websites, bots, automations, tools, and custom software. Includes an original interactive 3D sculpture, five concept studies, a GSAP overlay menu, Lenis smooth scrolling, ScrollTrigger story chapters, and a Cloudflare Pages contact endpoint addressed to `imzyrixx@gmail.com`.
 
+## Original experiments
+
+The **Idea Engine** replaces the generic sculpture with 144 instanced metallic fins that morph between Signal, Structure, and Orbit. Drag or arrow keys rotate it; energy changes the motion. It uses one instanced mesh, a small custom shader for dust, capped pixel density, and automatic quality reduction after slow frames. Rendering stops offscreen, in hidden tabs, and after a paused form settles. A self-hosted SVG remains available without WebGL.
+
+The **System Lab** is a local interactive prototype of website, bot, and automation routing. It animates real input through three stages and produces a copyable project blueprint. It does not execute external workflows or use an AI backend. The chapter dial reports actual reading progress and offers direct chapter navigation.
+
 ## Interactive components
 
 All ten supplied React Bits components are integrated into the site:
@@ -60,7 +66,7 @@ For local backend checks, copy `.dev.vars.example` to the ignored `.dev.vars`, e
 
 ### Storytelling and access
 
-The loading introduction waits for the initial font/poster assets, has a skip control and a timeout, and plays once per tab. Vertical scrolling drives CSS-sticky chapters through GSAP ScrollTrigger; Lenis is the single smooth-scrolling engine. Galleries retain drag, horizontal wheel, and keyboard interaction. The photo spiral allows vertical touch scrolling and horizontal dragging. Reduced motion removes sticky scroll journeys and autoplay while preserving content and manual controls. The section-focus outline is suppressed only on programmatic section targets; keyboard controls retain visible focus.
+The five-second cinematic introduction progresses through signal, system, and reality, with a numeric sequence readout, five reveal shutters, a skip control, and a 5.1-second failsafe. It plays once per tab; reduced motion bypasses it. Vertical scrolling drives CSS-sticky chapters through GSAP ScrollTrigger; Lenis is the single smooth-scrolling engine. Galleries retain drag, horizontal wheel, and keyboard interaction. The photo spiral allows vertical touch scrolling and horizontal dragging. Reduced motion removes sticky scroll journeys and autoplay while preserving content and manual controls. The section-focus outline is suppressed only on programmatic section targets; keyboard controls retain visible focus.
 
 ## Cloudflare Pages
 

@@ -127,6 +127,11 @@ export default function MotionOverlayMenu({
                 image: "/images/city.jpg",
               },
               {
+                link: "#lab",
+                text: "The experiment",
+                image: "/images/quarry.jpg",
+              },
+              {
                 link: "#services",
                 text: "Our capabilities",
                 image: "/images/bridge.jpg",

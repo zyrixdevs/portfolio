@@ -1,0 +1,844 @@
+:root {
+  --instrument: #d9dece;
+}
+button,
+a,
+input {
+  touch-action: manipulation;
+}
+.site-header {
+  height: 88px;
+}
+.hero {
+  position: relative;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 80px -56px 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 76% 43%, #adc0a80b, transparent 48%);
+}
+.hero-content {
+  grid-template-columns: 1.04fr 1fr;
+  min-height: 690px;
+}
+.hero h1 {
+  font-size: clamp(62px, 6.9vw, 112px);
+  letter-spacing: -0.065em;
+  line-height: 1.02;
+}
+.hero h1 .serif {
+  font-size: 1.2em;
+  letter-spacing: -0.045em;
+  color: #d2d9c1;
+}
+.hero-copy {
+  max-width: 420px;
+  font-size: 13px;
+}
+.hero-actions .button {
+  border-radius: 0;
+  padding: 18px 22px;
+}
+.hero-actions .button svg {
+  transition: transform 0.3s;
+}
+.hero-actions .button:hover svg {
+  transform: translate(3px, -3px);
+}
+.instrument-art {
+  height: 670px;
+  margin: 0 -20px 0 -30px;
+}
+.idea-engine {
+  height: 100%;
+  position: relative;
+}
+.engine-topline {
+  display: flex;
+  justify-content: space-between;
+  font-family: monospace;
+  font-size: 9px;
+  letter-spacing: 0.07em;
+  padding: 20px 10px;
+  color: #a8aea0;
+}
+.engine-live {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.engine-live i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #bccfab;
+}
+.idea-engine .sculpture {
+  height: calc(100% - 150px);
+  touch-action: pan-y;
+  cursor: grab;
+}
+.idea-engine .sculpture:active {
+  cursor: grabbing;
+}
+.idea-engine .sculpture canvas {
+  position: absolute;
+  inset: 0;
+}
+.engine-axis {
+  position: absolute;
+  color: #8a9382;
+  font: 8px monospace;
+  pointer-events: none;
+}
+.axis-x {
+  right: 15px;
+  top: 50%;
+}
+.axis-y {
+  bottom: 15px;
+  left: 50%;
+  transform: rotate(-90deg);
+}
+.engine-controls {
+  position: relative;
+  z-index: 3;
+  padding: 0 24px;
+}
+.engine-modes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-block: 1px solid #ffffff26;
+}
+.engine-modes button {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  background: none;
+  border: 0;
+  padding: 15px 10px;
+  font-size: 12px;
+  color: #b2b6aa;
+  transition:
+    color 0.25s,
+    background 0.25s;
+}
+.engine-modes button small {
+  font: 8px monospace;
+  color: #8d9586;
+}
+.engine-modes button[aria-pressed="true"] {
+  color: #f4efe3;
+  background: #d7e0c80b;
+}
+.engine-modes button[aria-pressed="true"] small {
+  color: #ff8052;
+}
+.engine-tuning {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 17px 10px;
+  font: 8px monospace;
+  color: #a9b39f;
+}
+.engine-tuning label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.engine-tuning input {
+  width: 80px;
+  height: 2px;
+  accent-color: #ff8553;
+  cursor: ew-resize;
+}
+.engine-tuning output {
+  font-variant-numeric: tabular-nums;
+}
+.engine-pause {
+  background: none;
+  border: 0;
+  padding: 8px;
+  font: inherit;
+}
+.engine-hint {
+  display: block;
+  text-align: center;
+  font: 8px monospace;
+  letter-spacing: 0.08em;
+  color: #9da592;
+}
+/* A five-second title sequence. The five shutters reveal the actual page beneath. */
+.cinematic-intro {
+  display: block;
+  padding: 0;
+  background: transparent;
+  color: #eee9dc;
+  overflow: hidden;
+}
+.intro-curtains {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+.intro-curtain {
+  width: 20%;
+  height: 100%;
+  background: #171b16;
+  transform-origin: top;
+}
+.intro-interface {
+  position: absolute;
+  inset: 0;
+  padding: 35px 4vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.intro-top,
+.intro-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  font: 9px monospace;
+  letter-spacing: 0.09em;
+}
+.intro-top {
+  border-bottom: 1px solid #d3dfbd25;
+  padding-bottom: 24px;
+}
+.intro-reticle {
+  position: absolute;
+  width: min(55vw, 560px);
+  aspect-ratio: 1;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  border: 1px solid #d1ddbf30;
+  border-radius: 50%;
+}
+.intro-reticle > i {
+  position: absolute;
+  top: 50%;
+  left: -12%;
+  width: 124%;
+  height: 1px;
+  background: #d3dfbd20;
+}
+.intro-reticle > i:nth-child(2) {
+  rotate: 90deg;
+}
+.intro-reticle > span {
+  position: absolute;
+  bottom: 10%;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font: 9px monospace;
+  color: #bac8a6;
+}
+.intro-ribs {
+  position: absolute;
+  inset: 18%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transform: rotate(-30deg);
+}
+.intro-rib {
+  width: 5px;
+  background: linear-gradient(#d2d9b3, #ff8c59, #3b271b);
+  transform-origin: center;
+}
+.intro-acts {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1.6em;
+  margin-top: -0.7em;
+  text-align: center;
+  overflow: hidden;
+  font-size: clamp(46px, 7vw, 116px);
+  line-height: 1.3;
+  letter-spacing: -0.055em;
+}
+.intro-acts > div {
+  position: absolute;
+  width: 100%;
+}
+.intro-acts em {
+  color: #e9be8f;
+}
+.intro-act-two,
+.intro-act-three {
+  opacity: 0;
+}
+.intro-bottom {
+  margin-top: auto;
+}
+.intro-counter {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.intro-counter > span {
+  font-size: clamp(55px, 7vw, 100px);
+  letter-spacing: -0.075em;
+}
+.intro-counter small {
+  font-size: 10px;
+  color: #a6b09a;
+}
+.cinematic-intro button {
+  margin: 0;
+  padding: 14px 0;
+  color: #e5e8d8;
+}
+/* A functioning sketch of the systems we make. */
+.system-lab {
+  background: #dce2d1;
+  color: #252d24;
+  padding: 60px 6vw 70px;
+  position: relative;
+  overflow: hidden;
+}
+.lab-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  color: #4b5943;
+}
+.lab-coordinate {
+  font: 9px monospace;
+}
+.lab-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 30px;
+  margin: 65px 0 50px;
+}
+.lab-heading h2 {
+  font-size: clamp(46px, 5vw, 80px);
+  letter-spacing: -0.055em;
+  line-height: 1.02;
+}
+.lab-heading em {
+  color: #687b4f;
+}
+.lab-heading > p {
+  font-size: 12px;
+  line-height: 1.8;
+  max-width: 310px;
+}
+.lab-tabs {
+  display: flex;
+  border-top: 1px solid #293e252c;
+  border-bottom: 1px solid #293e252c;
+}
+.lab-tabs button {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 22px 25px;
+  flex: 1;
+  border: 0;
+  border-right: 1px solid #293e252c;
+  background: none;
+  font-size: 14px;
+  text-align: left;
+  transition: background 0.3s;
+}
+.lab-tabs button:last-child {
+  border-right: 0;
+}
+.lab-tabs button[aria-pressed="true"] {
+  background: #283724;
+  color: #edf0e4;
+}
+.lab-tabs button span {
+  font: 9px monospace;
+}
+.lab-tabs button b {
+  margin-left: auto;
+  font-weight: 400;
+}
+.lab-machine {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8vw;
+  padding: 60px 4vw;
+}
+.lab-wire {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+}
+.lab-wire path {
+  fill: none;
+  stroke: #53654a;
+  stroke-width: 1;
+  stroke-dasharray: 1;
+  vector-effect: non-scaling-stroke;
+}
+.lab-node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: #dce2d1;
+  padding: 20px 5px;
+  border: 1px solid #43563740;
+}
+.node-symbol {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border: 1px solid #43563740;
+  border-radius: 50%;
+  font-size: 28px;
+  margin-bottom: 24px;
+  transition:
+    background 0.3s,
+    color 0.3s;
+}
+.lab-node.is-live .node-symbol {
+  background: #283724;
+  color: #eaf0df;
+}
+.node-index,
+.node-status {
+  font: 8px monospace;
+  letter-spacing: 0.04em;
+}
+.lab-node h3 {
+  font-size: clamp(15px, 1.5vw, 24px);
+  font-weight: 450;
+  letter-spacing: -0.04em;
+  margin: 12px 0 30px;
+}
+.node-status {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.node-status i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #7c8b70;
+}
+.is-live .node-status i {
+  background: #9a3d20;
+}
+.lab-signal {
+  position: absolute;
+  z-index: 2;
+  left: 17%;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ed6e37;
+  box-shadow: 0 0 0 8px #ed6e371b;
+  opacity: 0;
+}
+.lab-console {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 7vw;
+  border-top: 1px solid #293e252c;
+  padding-top: 35px;
+}
+.lab-console label {
+  font: 9px monospace;
+  letter-spacing: 0.1em;
+}
+.lab-input-line {
+  display: flex;
+  margin-top: 18px;
+  border-bottom: 1px solid #283724;
+}
+.lab-input-line input {
+  min-width: 0;
+  flex: 1;
+  background: none;
+  border: 0;
+  outline-offset: 2px;
+  padding: 14px 0;
+  color: #283724;
+  font-size: 15px;
+}
+.lab-input-line button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+  background: #283724;
+  color: #eef2e5;
+  border: 0;
+  padding: 10px 18px;
+  font: 9px monospace;
+}
+.lab-input-line button:disabled {
+  opacity: 0.65;
+}
+.lab-console form > p {
+  font-size: 10px;
+  color: #556349;
+  margin-top: 15px;
+}
+.lab-output > .eyebrow {
+  font-size: 9px;
+}
+.lab-output > p {
+  font-size: 25px;
+  letter-spacing: -0.04em;
+  line-height: 1.2;
+  margin: 16px 0;
+}
+.lab-output > p em {
+  font-size: 1.25em;
+}
+.lab-output h3 {
+  font-size: 23px;
+  font-weight: 450;
+  margin: 12px 0;
+  overflow-wrap: anywhere;
+}
+.lab-output h3 + p {
+  font-size: 12px;
+  letter-spacing: 0;
+}
+.lab-output button {
+  font-size: 11px;
+  border-bottom: 1px solid #283724;
+  padding-bottom: 5px;
+}
+.lab-contact {
+  margin-top: 35px;
+  font-size: 12px;
+}
+/* A compact, useful navigation instrument. Progress is actual reading position. */
+.chapter-dial {
+  position: fixed;
+  z-index: 45;
+  left: 50%;
+  bottom: 22px;
+  transform: translate(-50%, 20px);
+  opacity: 0;
+  pointer-events: none;
+  background: #1b211aee;
+  color: #dce5ce;
+  border: 1px solid #bed0a633;
+  border-radius: 4px;
+  backdrop-filter: blur(16px);
+  transition:
+    opacity 0.25s,
+    transform 0.25s;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+}
+.chapter-dial.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+}
+.dial-toggle {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 4px;
+  background: none;
+  border: 0;
+  font: 10px monospace;
+  white-space: nowrap;
+}
+.dial-number {
+  color: #f4a277;
+  font: 20px monospace;
+  letter-spacing: -0.1em;
+  min-width: 25px;
+}
+.dial-toggle b {
+  font-weight: 400;
+  margin-left: 10px;
+}
+.dial-links {
+  display: none;
+  gap: 5px;
+  margin-left: 20px;
+}
+.is-open .dial-links {
+  display: flex;
+}
+.dial-links a {
+  position: relative;
+  padding: 9px;
+  font: 9px monospace;
+}
+.dial-links a[aria-current] {
+  color: #ffa36e;
+}
+.dial-links small {
+  display: none;
+}
+.dial-progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 1px;
+  background: #f09867;
+  width: calc(var(--reading, 0) * 100%);
+}
+.footer-techtext {
+  position: relative;
+}
+.footer-techtext::before {
+  content: "END OF THIS CHAPTER. BEGINNING OF YOURS.";
+  display: block;
+  text-align: center;
+  font: 9px monospace;
+  letter-spacing: 0.13em;
+  color: #a4ad98;
+  padding-top: 35px;
+}
+@media (min-width: 1600px) {
+  .hero-content {
+    min-height: 76svh;
+  }
+  .instrument-art {
+    height: 740px;
+  }
+}
+@media (max-width: 1000px) {
+  .hero-actions {
+    gap: 18px;
+  }
+  .hero-actions .text-link {
+    font-size: 10px;
+  }
+  .engine-tuning {
+    gap: 7px;
+  }
+  .engine-tuning input {
+    width: 60px;
+  }
+  .lab-machine {
+    gap: 4vw;
+  }
+}
+@media (max-width: 800px) {
+  .hero h1 {
+    font-size: clamp(48px, 11.5vw, 76px);
+    letter-spacing: -0.07em;
+  }
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    min-height: 0;
+  }
+  .hero-text {
+    padding-top: 48px;
+  }
+  .hero-copy {
+    font-size: 12px;
+    max-width: 340px;
+    margin-top: 25px;
+  }
+  .hero-actions {
+    flex-wrap: wrap;
+  }
+  .hero-actions .button {
+    font-size: 11px;
+    padding: 15px;
+  }
+  .hero-actions .text-link {
+    font-size: 11px;
+  }
+  .instrument-art {
+    margin: 30px -15px 20px;
+    height: 510px;
+  }
+  .engine-topline {
+    font-size: 8px;
+    padding: 10px 15px;
+  }
+  .engine-controls {
+    padding: 0 15px;
+  }
+  .engine-modes button {
+    gap: 8px;
+    font-size: 11px;
+  }
+  .engine-tuning {
+    font-size: 8px;
+  }
+  .engine-hint {
+    font-size: 7px;
+  }
+  .intro-interface {
+    padding: 22px;
+  }
+  .intro-top {
+    font-size: 7px;
+    align-items: flex-start;
+  }
+  .intro-top span:last-child {
+    text-align: right;
+    max-width: 110px;
+  }
+  .intro-reticle {
+    width: 80vw;
+  }
+  .intro-acts {
+    font-size: 11vw;
+    height: 2.9em;
+    margin-top: -1.4em;
+  }
+  .intro-acts em {
+    display: block;
+  }
+  .intro-bottom {
+    font-size: 7px;
+  }
+  .intro-bottom > span {
+    max-width: 80px;
+    line-height: 1.7;
+  }
+  .intro-counter {
+    gap: 7px;
+  }
+  .intro-counter > span {
+    font-size: 56px;
+  }
+  .cinematic-intro button {
+    font-size: 8px;
+  }
+  .system-lab {
+    padding: 35px 20px 55px;
+  }
+  .lab-coordinate {
+    display: none;
+  }
+  .lab-top .eyebrow {
+    font-size: 8px;
+  }
+  .lab-heading {
+    display: block;
+    margin: 38px 0;
+  }
+  .lab-heading h2 {
+    font-size: 43px;
+  }
+  .lab-heading > p {
+    margin-top: 24px;
+    font-size: 11px;
+  }
+  .lab-tabs button {
+    padding: 16px 9px;
+    font-size: 11px;
+    gap: 7px;
+  }
+  .lab-tabs button b {
+    display: none;
+  }
+  .lab-machine {
+    gap: 12px;
+    padding: 35px 0;
+  }
+  .lab-node {
+    padding: 16px 5px;
+  }
+  .node-symbol {
+    width: 38px;
+    height: 38px;
+    font-size: 20px;
+    margin-bottom: 17px;
+  }
+  .node-index {
+    font-size: 6px;
+  }
+  .lab-node h3 {
+    font-size: 13px;
+    min-height: 32px;
+    margin-bottom: 18px;
+  }
+  .node-status {
+    font-size: 5px;
+    gap: 3px;
+  }
+  .lab-console {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .lab-input-line {
+    flex-wrap: wrap;
+  }
+  .lab-input-line input {
+    font-size: 13px;
+    width: 100%;
+    flex: 0 0 100%;
+  }
+  .lab-input-line button {
+    width: 100%;
+    justify-content: space-between;
+    padding: 15px;
+  }
+  .lab-output {
+    min-height: 125px;
+  }
+  .chapter-dial {
+    max-width: calc(100% - 30px);
+    bottom: 12px;
+  }
+  .is-open {
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 350px;
+  }
+  .is-open .dial-links {
+    margin: 0;
+    padding-bottom: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cinematic-intro {
+    display: none;
+  }
+  .chapter-dial {
+    transition: none;
+  }
+  .lab-signal {
+    display: none;
+  }
+}
+.node-symbol svg {
+  width: 28px;
+  height: 28px;
+}
+.lab-output .copy-error {
+  font-size: 11px;
+  letter-spacing: 0;
+  line-height: 1.6;
+}
+@media (max-width: 800px) {
+  .node-symbol svg {
+    width: 20px;
+    height: 20px;
+  }
+}

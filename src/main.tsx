@@ -8,3 +8,5 @@ import './upgrade.css';
 ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App /></React.StrictMode>);
 
 import './story.css';
+
+import './atelier.css';

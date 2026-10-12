@@ -12,7 +12,7 @@ test("page renders without runtime errors or horizontal overflow", async ({
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
   await expect(
-    page.getByRole("heading", { name: "Code meets possibility." }),
+    page.getByRole("heading", { name: "From a spark. To a system." }),
   ).toBeVisible();
   await expect(page.locator(".sculpture")).toHaveAttribute(
     "data-ready",
