@@ -36,7 +36,7 @@ test("cinematic opening lasts five seconds and supports skipping", async ({
 test("original WebGL engine morphs, rotates with keys, and stops rendering when paused", async ({
   page,
 }) => {
-  await page.addInitScript(() => sessionStorage.setItem("zyrixdev-intro", "1"));
+  await page.addInitScript(() => sessionStorage.setItem("zyrixdev-intro", "cinematic-v2"));
   await page.goto("/");
   const engine = page.locator(".sculpture");
   await engine.scrollIntoViewIfNeeded();
@@ -61,12 +61,14 @@ test("original WebGL engine morphs, rotates with keys, and stops rendering when 
     timeout: 8000,
   });
   await page.getByRole("button", { name: "Resume sculpture" }).click();
+  // On a small screen, clicking the controls can scroll the canvas offscreen.
+  await engine.scrollIntoViewIfNeeded();
   await expect(engine).toHaveAttribute("data-render-state", "running");
 });
 test("system prototype routes input, cancels cleanly, and prefills a relevant inquiry", async ({
   page,
 }) => {
-  await page.addInitScript(() => sessionStorage.setItem("zyrixdev-intro", "1"));
+  await page.addInitScript(() => sessionStorage.setItem("zyrixdev-intro", "cinematic-v2"));
   await page.goto("/");
   const lab = page.locator("#lab");
   await lab.scrollIntoViewIfNeeded();

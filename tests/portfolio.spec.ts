@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
 test.beforeEach(async ({ page }) => {
-  await page.addInitScript(() => sessionStorage.setItem("zyrixdev-intro", "1"));
+  await page.addInitScript(() => sessionStorage.setItem("zyrixdev-intro", "cinematic-v2"));
 });
 
 test("page renders without runtime errors or horizontal overflow", async ({

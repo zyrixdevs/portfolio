@@ -21,7 +21,7 @@ test("vertical scrolling advances the horizontal gallery and looping services", 
   page,
   isMobile,
 }) => {
-  await page.addInitScript(() => sessionStorage.setItem("zyrixdev-intro", "1"));
+  await page.addInitScript(() => sessionStorage.setItem("zyrixdev-intro", "cinematic-v2"));
   await page.goto("/");
   await progress(page, ".work-scroll", 0.1);
   const carousel = page.getByRole("region", { name: "Image carousel" });
@@ -65,7 +65,7 @@ test("vertical scrolling advances the horizontal gallery and looping services", 
 test("scroll flips multiple cards and advances the separate photo spiral", async ({
   page,
 }) => {
-  await page.addInitScript(() => sessionStorage.setItem("zyrixdev-intro", "1"));
+  await page.addInitScript(() => sessionStorage.setItem("zyrixdev-intro", "cinematic-v2"));
   await page.goto("/");
   await progress(page, ".spiral-scroll", 0.2);
   const photo = page.locator('.spiral-stage [role="listitem"]').first();
@@ -104,7 +104,7 @@ test("loading story completes and releases page scrolling", async ({
 test("photo spiral keeps manual drag alongside scroll control", async ({
   page,
 }) => {
-  await page.addInitScript(() => sessionStorage.setItem("zyrixdev-intro", "1"));
+  await page.addInitScript(() => sessionStorage.setItem("zyrixdev-intro", "cinematic-v2"));
   await page.goto("/");
   await progress(page, ".spiral-scroll", 0.35);
   const stage = page.locator(".spiral-stage");

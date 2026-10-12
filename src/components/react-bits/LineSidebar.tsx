@@ -99,7 +99,7 @@ const LineSidebar = ({
       if (!el) continue;
       const target = Math.max(targetsRef.current[i] || 0, activeRef.current === i ? 1 : 0);
       const cur = currentRef.current[i] || 0;
-      const next = cur + (target - cur) * k;
+      const next = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? target : cur + (target - cur) * k;
       const settled = Math.abs(target - next) < 0.0015;
       const value = settled ? target : next;
       currentRef.current[i] = value;
@@ -216,7 +216,7 @@ const LineSidebar = ({
             )}
             <span className="relative inline-flex items-baseline leading-[1.2] [color:color-mix(in_srgb,var(--accent-color)_calc(var(--effect,0)*100%),var(--text-color))] [font-size:var(--font-size)] [transform:translateX(calc(var(--effect,0)*var(--max-shift)))]">
               {showIndex && (
-                <span className="mr-[0.6rem] font-mono text-[0.85em] [opacity:calc(0.8+var(--effect,0)*0.2)]">
+                <span className="mr-[0.6rem] font-mono text-[0.85em]" style={{color:textColor}}>
                   {String(index + 1).padStart(2, '0')}
                 </span>
               )}

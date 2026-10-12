@@ -9,7 +9,7 @@ export default function StoryIntro() {
   useEffect(() => {
     let seen = false;
     try {
-      seen = !!sessionStorage.getItem("zyrixdev-intro");
+      seen = sessionStorage.getItem("zyrixdev-intro") === "cinematic-v2";
     } catch {
       /* Storage is optional. */
     }
@@ -110,7 +110,7 @@ export default function StoryIntro() {
   useEffect(() => {
     if (finished) {
       try {
-        sessionStorage.setItem("zyrixdev-intro", "1");
+        sessionStorage.setItem("zyrixdev-intro", "cinematic-v2");
       } catch {
         /* Optional. */
       }
